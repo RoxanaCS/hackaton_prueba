@@ -41,7 +41,7 @@ function GoogleSignUp(){
 }
 //función para usar la API de imbd
 function apiCall(movie){
-	$.getJSON('http://www.omdbapi.com/?apikey=3a181f1c&t=' + encodeURI(movie)).then(function(response){
+	$.getJSON('https://www.omdbapi.com/?apikey=3a181f1c&t=' + encodeURI(movie)).then(function(response){
     if(response.Title != undefined){
         $('.foto').html(''); //limpiamos el contenedor
         //dentro de acá debo sacar todos los objetos
