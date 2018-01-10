@@ -16,21 +16,26 @@ var config = {
 firebase.initializeApp(config);
 
 //función de ingreso con google
+var token = 'none';
+var user = 'none';
 function GoogleSignUp(){
   if (!firebase.auth().currentUser){  //para saber si el usuario se ha conectado
     var provider = new firebase.auth.GoogleAuthProvider();
     provider.addScope('https://www.googleapis.com/auth/contacts.readonly');
     firebase.auth().signInWithPopup(provider).then(function(result) {
-      var token = result.credential.accessToken;
-      var user = result.user;
+      token = result.credential.accessToken;
+      user = result.user;
       $('.inicio').hide() && $('.search-section').show();
-    //  console.log(user);
+      //sacar el nombre de usuario
+      //console.log(user.displayName);
+      //sacar la foto de usuario
+      //console.log(user.photoURL);
     }).catch(function(error){
       var errorCode = error.code;
       var errorMessage = error.message;
       var errorEmail = error.email;
       var credencial = error.credencial;
-      console.log(errorCode);
+      //console.log(errorCode);
       if(errorCode === 'auth/account-exists-with-different-credential'){
         alert('Es el mismo usuario');
       }
@@ -42,14 +47,28 @@ function GoogleSignUp(){
 //función para usar la API de imbd
 function apiCall(movie){
 	$.getJSON('https://www.omdbapi.com/?apikey=3a181f1c&t=' + encodeURI(movie)).then(function(response){
+    //console.log(response);
     if(response.Title != undefined){
         $('.foto').html(''); //limpiamos el contenedor
         //dentro de acá debo sacar todos los objetos
         $('.foto').append(
-          '<img src=' + response.Poster + '>' +
-          '<p>' + response.imdbRating +'</p>'
+          '<img id = "poster" src=' + response.Poster + '>' +
+          '<p id="rating">' + response.imdbRating +'</p>' +
+          '<button type="button" class="btn btn-fav">' + 'favoritos' + '</button>'
           )
       }
+      //guardar las peliculas vistas por el usuario en firebase
+      $('.btn-fav').click(function(){
+          var poster = $("#poster");
+          var rating = $('#rating');
+          movieData.push({
+            posterMovie:poster,
+            ratingImdb:rating,
+            //comentario:comentario,
+            user:user.displayName,
+            profile:user.photoURL
+          })
+      });
     })
 }
 //hago click en el buscador de peliculas
@@ -58,3 +77,6 @@ function apiCall(movie){
     apiCall(movieSearch);
     //console.log(apiCall(movieSearch));
   });
+
+//guardar en una variable la data de firebase
+var movieData = firebase.database().ref('movies');

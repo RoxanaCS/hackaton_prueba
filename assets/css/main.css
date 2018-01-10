@@ -23,3 +23,6 @@ colores: negro =  gris = #F2F2F2; rojo = #DF0101*/
   color: #fff;
   outline: none;
 }
+#btn-fav{
+  background-color: red;
+}
